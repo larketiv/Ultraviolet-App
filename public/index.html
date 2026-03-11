@@ -246,7 +246,7 @@
       <div class="spinner"></div>
       <div class="loading-text">Loading through proxy…</div>
     </div>
-    <iframe id="proxy-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    <iframe id="proxy-frame"></iframe>
   </div>
 </div>
 
@@ -296,7 +296,16 @@
 <script src="/uv/uv.bundle.js"></script>
 <script src="/uv/uv.config.js"></script>
 <script>
-  navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/uv/service/' }).catch(console.error);
+  // Service worker registration — wait until ready
+  let swReady = false;
+  navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/uv/service/' })
+    .then(reg => {
+      const sw = reg.installing || reg.waiting || reg.active;
+      if (reg.active) { swReady = true; return; }
+      sw.addEventListener('statechange', () => {
+        if (sw.state === 'activated') swReady = true;
+      });
+    }).catch(console.error);
 
   // Clock
   function updateClock() {
@@ -460,10 +469,20 @@
     const frame = document.getElementById('proxy-frame');
     const loader = document.getElementById('loader');
     frame.classList.remove('loaded'); loader.classList.remove('hide');
-    frame.src = PROXY(url);
-    frame.onload = () => { frame.classList.add('loaded'); loader.classList.add('hide'); };
     document.getElementById('home').classList.add('hide');
     document.getElementById('browser').classList.add('show');
+
+    const go = () => {
+      frame.src = PROXY(url);
+      frame.onload = () => { frame.classList.add('loaded'); loader.classList.add('hide'); };
+    };
+
+    if (swReady) {
+      go();
+    } else {
+      // Wait for SW to activate then navigate
+      navigator.serviceWorker.ready.then(() => { swReady = true; go(); });
+    }
   }
 
   function navigateTo(val) {
