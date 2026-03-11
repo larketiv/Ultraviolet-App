@@ -33,17 +33,6 @@
     pointer-events: none; z-index: 0;
   }
 
-  /* DOTS */
-  .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
-  .dot {
-    position: absolute; border-radius: 50%; background: var(--brown); opacity: 0;
-    animation: floatDot var(--dur) ease-in-out infinite var(--delay);
-  }
-  @keyframes floatDot {
-    0%,100% { opacity: 0; transform: translateY(0) scale(1); }
-    50%     { opacity: var(--op); transform: translateY(-18px) scale(1.15); }
-  }
-
   /* CLOCK */
   .clock-widget {
     position: fixed; top: 16px; left: 16px; z-index: 10;
@@ -59,6 +48,17 @@
     color: var(--dark); opacity: 0.7; line-height: 1.2;
   }
   .clock-day { font-size: 0.72rem; color: var(--muted); opacity: 0.8; margin-top: 2px; }
+
+  /* DOTS */
+  .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .dot {
+    position: absolute; border-radius: 50%; background: var(--brown); opacity: 0;
+    animation: floatDot var(--dur) ease-in-out infinite var(--delay);
+  }
+  @keyframes floatDot {
+    0%,100% { opacity: 0; transform: translateY(0) scale(1); }
+    50%     { opacity: var(--op); transform: translateY(-18px) scale(1.15); }
+  }
 
   /* HOME */
   #home {
@@ -79,6 +79,7 @@
   .hero-title:hover { transform: scale(1.04) rotate(-1deg); letter-spacing: 6px; }
   .t-letter { display: inline-block; }
 
+  /* SEARCH */
   .search-wrap { width: 100%; max-width: 660px; }
   .search-box {
     display: flex; align-items: center;
@@ -101,7 +102,6 @@
   }
   .search-btn:hover { background: var(--dark); transform: translateY(-2px) scale(1.07) rotate(-1deg); box-shadow: 0 8px 24px var(--glow); letter-spacing: 1.5px; }
   .search-btn:active { transform: translateY(0) scale(1); }
-
   .search-tabs { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
   .nav-btn {
     padding: 8px 22px; border-radius: 30px; border: 1.5px solid var(--border);
@@ -135,13 +135,13 @@
   .url-bar {
     flex: 1; background: #fff; border: 1.5px solid var(--border); border-radius: 30px;
     padding: 7px 18px; font-family: inherit; font-size: 0.82rem; color: var(--muted);
-    outline: none; transition: border-color 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    outline: none; transition: border-color 0.2s;
   }
   .url-bar:focus { border-color: var(--brown2); color: var(--text); }
   .go-btn {
     padding: 7px 18px; border-radius: 30px; border: none;
     background: var(--brown); color: #fdf6ee;
-    font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+    font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
     transition: all 0.2s;
   }
   .go-btn:hover { background: var(--dark); }
@@ -293,7 +293,11 @@
   </div>
 </div>
 
+<script src="/uv/uv.bundle.js"></script>
+<script src="/uv/uv.config.js"></script>
 <script>
+  navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/uv/service/' }).catch(console.error);
+
   // Clock
   function updateClock() {
     const now = new Date();
@@ -360,13 +364,13 @@
 
     const particles = letters.map(span => {
       const r = span.getBoundingClientRect();
-      return { el: span, ox: r.left, oy: r.top, x: r.left, y: r.top, w: r.width, h: r.height,
+      return { el: span, x: r.left, y: r.top, w: r.width, h: r.height,
         vx: (Math.random()-0.5)*18, vy: -8 - Math.random()*12,
         rot: 0, vrot: (Math.random()-0.5)*22, opacity: 1 };
     });
 
     const tr = title.getBoundingClientRect();
-    title.style.width  = tr.width  + 'px';
+    title.style.width = tr.width + 'px';
     title.style.height = tr.height + 'px';
     title.style.visibility = 'hidden';
 
@@ -380,7 +384,6 @@
 
     const gravity = 0.55, friction = 0.984;
     let frame = 0;
-
     function physics() {
       frame++;
       let allFaded = true;
@@ -390,11 +393,9 @@
         p.vy += gravity; p.vx *= friction; p.vy *= friction;
         p.x += p.vx; p.y += p.vy;
         p.rot += p.vrot; p.vrot *= 0.97;
-
-        if (p.x < 0)                      { p.x = 0;                       p.vx *= -0.6; }
-        if (p.x+p.w > window.innerWidth)  { p.x = window.innerWidth-p.w;   p.vx *= -0.6; }
-        if (p.y+p.h > window.innerHeight) { p.y = window.innerHeight-p.h;  p.vy *= -0.5; p.vx *= 0.85; }
-
+        if (p.x < 0)                      { p.x = 0;                      p.vx *= -0.6; }
+        if (p.x+p.w > window.innerWidth)  { p.x = window.innerWidth-p.w;  p.vx *= -0.6; }
+        if (p.y+p.h > window.innerHeight) { p.y = window.innerHeight-p.h; p.vy *= -0.5; p.vx *= 0.85; }
         obstacles.forEach(o => {
           if (p.x < o.right && p.x+p.w > o.left && p.y < o.bottom && p.y+p.h > o.top) {
             const oL=(p.x+p.w)-o.left, oR=o.right-p.x, oT=(p.y+p.h)-o.top, oB=o.bottom-p.y;
@@ -402,7 +403,6 @@
             else { p.vy*=-0.6; p.y+=oT<oB?-oT-1:oB+1; }
           }
         });
-
         particles.forEach(q => {
           if (q===p || q.opacity<=0) return;
           const dx=(p.x+p.w/2)-(q.x+q.w/2), dy=(p.y+p.h/2)-(q.y+q.h/2);
@@ -412,15 +412,12 @@
             if (rv<0) { p.vx-=rv*nx*0.5; p.vy-=rv*ny*0.5; q.vx+=rv*nx*0.5; q.vy+=rv*ny*0.5; }
           }
         });
-
         if (frame > 80) p.opacity = Math.max(0, p.opacity - 0.03);
         p.el.style.left = p.x+'px'; p.el.style.top = p.y+'px';
         p.el.style.opacity = p.opacity;
         p.el.style.transform = `rotate(${p.rot}deg)`;
       });
-
       if (!allFaded) { requestAnimationFrame(physics); return; }
-
       particles.forEach(p => {
         title.appendChild(p.el);
         p.el.style.cssText = 'display:inline-block;opacity:0;transition:opacity 0.7s ease;';
@@ -445,7 +442,7 @@
   function xorEncode(str) {
     return encodeURIComponent([...str].map(c => String.fromCharCode(c.charCodeAt(0) ^ 2)).join(''));
   }
-  const PROXY = url => `https://governing-helaine-larkywarky-8eb6b21c.koyeb.app/uv/service/${xorEncode(url)}`;
+  const PROXY = url => `/uv/service/${xorEncode(url)}`;
 
   function doSearch() {
     const q = document.getElementById('searchInput').value.trim();
