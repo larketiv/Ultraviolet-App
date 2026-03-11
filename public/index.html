@@ -210,7 +210,7 @@
 <div class="clock-widget">
   <div class="clock-time" id="clockTime"></div>
   <div class="clock-day" id="clockDay"></div>
-  <div style="font-size:0.65rem;color:var(--muted);opacity:0.6;margin-top:4px;">v66</div>
+  <div style="font-size:0.65rem;color:var(--muted);opacity:0.6;margin-top:4px;">v67</div>
 </div>
 
 <div class="dots" id="dots"></div>
@@ -457,10 +457,7 @@
     ddg:     q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
     youtube: q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
   };
-  function xorEncode(str) {
-    return encodeURIComponent([...str].map(c => String.fromCharCode(c.charCodeAt(0) ^ 2)).join(''));
-  }
-  const PROXY = url => `/uv/service/${xorEncode(url)}`;
+  const PROXY = url => `/uv/service/${__uv$config.encodeUrl(url)}`;
 
   function doSearch() {
     const q = document.getElementById('searchInput').value.trim();
@@ -512,14 +509,6 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeModal('about-overlay'); closeModal('files-overlay'); }
   });
-
-<script src="/baremux/index.js"></script>
-<script>
-  const { BareMux } = window;
-  const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
-  conn.setTransport("/epoxy/index.mjs", ["https://proxy.zenith.boo/bare/"]);
-</script>
- 
 </script>
 </body>
 </html>
