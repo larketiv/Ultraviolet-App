@@ -1,1 +1,7 @@
-
+services:
+  - type: web
+    name: stomatic-proxy
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    plan: free
