@@ -1,4 +1,4 @@
-import { join } from "node:path";
+import { join } from 'path';
 import { hostname } from "node:os";
 import { createServer } from "node:http";
 import express from "express";
@@ -20,7 +20,7 @@ app.use("/baremux/", express.static(baremuxPath));
 // Error for everything else
 app.use((req, res) => {
 	res.status(404);
-	res.sendFile("./public/404.html");
+	res.sendFile('index.html', { root: join(new URL('.', import.meta.url).pathname, '../public') });
 });
 
 const server = createServer();
