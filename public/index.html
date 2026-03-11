@@ -293,19 +293,27 @@
   </div>
 </div>
 
-<script src="/uv/uv.bundle.js"></script>
-<script src="/uv/uv.config.js"></script>
 <script>
-  // Service worker registration — wait until ready
   let swReady = false;
-  navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/uv/service/' })
-    .then(reg => {
-      const sw = reg.installing || reg.waiting || reg.active;
-      if (reg.active) { swReady = true; return; }
-      sw.addEventListener('statechange', () => {
-        if (sw.state === 'activated') swReady = true;
-      });
-    }).catch(console.error);
+  // Load UV bundle first, then register SW
+  const uvBundle = document.createElement('script');
+  uvBundle.src = '/uv/uv.bundle.js';
+  uvBundle.onload = () => {
+    const uvConfig = document.createElement('script');
+    uvConfig.src = '/uv/uv.config.js';
+    uvConfig.onload = () => {
+      navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/uv/service/' })
+        .then(reg => {
+          const sw = reg.installing || reg.waiting || reg.active;
+          if (reg.active) { swReady = true; return; }
+          sw.addEventListener('statechange', () => {
+            if (sw.state === 'activated') swReady = true;
+          });
+        }).catch(console.error);
+    };
+    document.head.appendChild(uvConfig);
+  };
+  document.head.appendChild(uvBundle);
 
   // Clock
   function updateClock() {
