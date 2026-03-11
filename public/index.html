@@ -474,7 +474,7 @@
 
     const go = () => {
       frame.src = PROXY(url);
-      frame.onload = () => { frame.classList.add('loaded'); loader.classList.add('hide'); };
+      setTimeout(() => { frame.classList.add('loaded'); loader.classList.add('hide'); }, 2000);
     };
 
     if (swReady) {
