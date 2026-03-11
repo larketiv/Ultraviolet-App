@@ -1,124 +1,501 @@
-<!doctype html>
-<html>
-	<head>
-		<meta charset="utf-8" />
-		<meta
-			name="viewport"
-			content="width=device-width, initial-scale=1.0, shrink-to-fit=no"
-		/>
-		<title>Ultraviolet | Sophisticated Web Proxy</title>
-		<meta
-			name="description"
-			content="Ultraviolet is a highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers. Unblock sites today!"
-		/>
-		<meta
-			name="keywords"
-			content="proxy, web proxy, ultraviolet, service workers, unblock websites, unblock chromebook, free web proxy, proxy list, proxy sites, un block chromebook, online proxy, proxy server, proxysite, proxy youtube, bypass securly, bypass iboss, bypass lightspeed filter, holy unblocker, chromebooks, titanium network, unblock youtube, youtube proxy, unblocked youtube, youtube unblocked"
-		/>
-		<meta
-			name="theme-color"
-			media="(prefers-color-scheme: dark)"
-			content="#434c5e"
-		/>
-		<meta name="googlebot" content="index, follow, snippet" />
-		<link rel="shortcut icon" content="favicon.ico" />
-		<link rel="stylesheet" href="index.css" />
-		
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stomatic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:      #f5efe6;
+    --surface: #ede0d0;
+    --surface2:#e4d3bf;
+    --border:  rgba(120,80,40,0.15);
+    --brown:   #7b4f2e;
+    --brown2:  #a0673a;
+    --dark:    #3b2510;
+    --muted:   #9e7a5a;
+    --text:    #3b2510;
+    --shadow:  rgba(80,40,10,0.12);
+    --glow:    rgba(123,79,46,0.18);
+  }
+  body {
+    font-family: 'Arial Rounded MT Bold', 'Arial Rounded', Arial, sans-serif;
+    background: var(--bg); color: var(--text);
+    min-height: 100vh; display: flex; flex-direction: column; overflow: hidden;
+  }
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 15% 5%,  rgba(180,130,80,0.13) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 85% 95%, rgba(140,90,40,0.10) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
 
-		<script src="baremux/index.js"></script>
-		<script src="uv/uv.bundle.js"></script>
-		<script src="uv/uv.config.js"></script>
+  /* DOTS */
+  .dots { position: fixed; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+  .dot {
+    position: absolute; border-radius: 50%; background: var(--brown); opacity: 0;
+    animation: floatDot var(--dur) ease-in-out infinite var(--delay);
+  }
+  @keyframes floatDot {
+    0%,100% { opacity: 0; transform: translateY(0) scale(1); }
+    50%     { opacity: var(--op); transform: translateY(-18px) scale(1.15); }
+  }
 
-		<script type="application/ld+json">
-			{
-				"@context": "https://schema.org",
-				"@type": "FAQPage",
-				"mainEntity": [
-					{
-						"@type": "Question",
-						"name": "What is Ultraviolet (Web Proxy)?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Highly sophisticated proxy used for evading internet censorship or accessing websites in a controlled sandbox using the power of service-workers and more!"
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "How do I unblock sites using Ultraviolet?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Simply head to an official site featuring Ultraviolet such as Holy Unblocker or Incognito! You can also self-host Ultraviolet on your own web server for maximum privacy."
-						}
-					},
-					{
-						"@type": "Question",
-						"name": "What if Ultraviolet is blocked or not working?",
-						"acceptedAnswer": {
-							"@type": "Answer",
-							"text": "Join the Titanium Network Discord at discord.gg/unblock!"
-						}
-					}
-				]
-			}
-		</script>
-	</head>
+  /* CLOCK */
+  .clock-widget {
+    position: fixed; top: 16px; left: 16px; z-index: 10;
+    background: rgba(237,224,208,0.25);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(120,80,40,0.1);
+    border-radius: 14px; padding: 10px 16px;
+    pointer-events: none;
+  }
+  .clock-time {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--dark); opacity: 0.7; line-height: 1.2;
+  }
+  .clock-day { font-size: 0.72rem; color: var(--muted); opacity: 0.8; margin-top: 2px; }
 
-	<body>
-		<div
-			title="Ultraviolet Logo"
-			class="flex-center logo-wrapper header-center"
-		>
-			<img class="logo" src="uv.png" alt="Ultraviolet" />
-			<h1>Ultraviolet | TN</h1>
-		</div>
-		<div class="flex-center desc left-margin">
-			<p>
-				Ultraviolet is highly sophisticated proxy used for evading internet
-				censorship.
-			</p>
-		</div>
+  /* HOME */
+  #home {
+    position: relative; z-index: 5; flex: 1;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    padding: 48px 20px;
+    transition: opacity 0.4s, transform 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  #home.hide { opacity: 0; pointer-events: none; transform: translateY(-30px); position: absolute; width: 100%; }
 
-		<form id="uv-form" class="flex-center">
-			<input
-				id="uv-search-engine"
-				value="https://www.google.com/search?q=%s"
-				type="hidden"
-			/>
-			<input id="uv-address" type="text" placeholder="Search the web freely" />
-		</form>
-		<div class="desc left-margin">
-			<p id="uv-error"></p>
-			<pre id="uv-error-code"></pre>
-		</div>
-		<footer>
-			<div>
-				<a
-					title="The TitaniumNetwork GitHub organization"
-					href="https://github.com/titaniumnetwork-dev"
-					>TitaniumNetwork</a
-				>
-				<a title="The TitaniumNetwork Discord" href="https://discord.gg/unblock"
-					>Discord</a
-				>
-				<a
-					title="The TompHTTP GitHub organization"
-					href="https://github.com/tomphttp"
-					>TompHTTP</a
-				>
-				<a
-					title="The official deployment repository for Ultraviolet"
-					href="https://github.com/titaniumnetwork-dev/Ultraviolet-App"
-					>GitHub</a
-				>
-				<a title="License information" href="credits.html">Credits</a>
-			</div>
-			<div>
-				<span>Ultraviolet &copy; TN 2023</span>
-			</div>
-		</footer>
-		<iframe style="display: none" id="uv-frame"></iframe>
-		<script src="register-sw.js"></script>
-		<script src="search.js"></script>
-		<script src="index.js"></script>
-	</body>
+  .hero-title {
+    font-family: 'Playfair Display', Georgia, serif;
+    font-size: clamp(4rem, 10vw, 7rem); font-weight: 900;
+    letter-spacing: 2px; color: var(--dark); text-align: center;
+    margin-bottom: 48px; line-height: 1.1; cursor: pointer;
+    transition: transform 0.3s cubic-bezier(.16,1,.3,1), letter-spacing 0.3s ease;
+  }
+  .hero-title:hover { transform: scale(1.04) rotate(-1deg); letter-spacing: 6px; }
+  .t-letter { display: inline-block; }
+
+  .search-wrap { width: 100%; max-width: 660px; }
+  .search-box {
+    display: flex; align-items: center;
+    background: rgba(255,255,255,0.55);
+    border: 1.5px solid var(--border); border-radius: 50px;
+    padding: 6px 6px 6px 24px;
+    box-shadow: 0 4px 24px var(--shadow);
+    transition: all 0.3s, transform 0.25s cubic-bezier(.16,1,.3,1);
+  }
+  .search-box:hover { transform: translateY(-3px) scale(1.01); box-shadow: 0 10px 36px var(--shadow); border-color: var(--brown2); }
+  .search-box:focus-within { border-color: var(--brown2); box-shadow: 0 0 0 3px rgba(160,103,58,0.12), 0 8px 32px var(--shadow); transform: translateY(-2px); }
+  .search-icon { color: var(--muted); font-size: 1rem; margin-right: 10px; flex-shrink: 0; }
+  .search-input { flex: 1; background: none; border: none; outline: none; color: var(--text); font-size: 1rem; font-family: inherit; padding: 10px 0; }
+  .search-input::placeholder { color: #c4a882; }
+  .search-btn {
+    padding: 11px 28px; border-radius: 40px; border: none;
+    background: var(--brown); color: #fdf6ee;
+    font-family: inherit; font-size: 0.88rem; font-weight: 700; cursor: pointer; letter-spacing: 0.3px;
+    transition: all 0.22s cubic-bezier(.16,1,.3,1); box-shadow: 0 2px 10px var(--glow);
+  }
+  .search-btn:hover { background: var(--dark); transform: translateY(-2px) scale(1.07) rotate(-1deg); box-shadow: 0 8px 24px var(--glow); letter-spacing: 1.5px; }
+  .search-btn:active { transform: translateY(0) scale(1); }
+
+  .search-tabs { display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap; justify-content: center; }
+  .nav-btn {
+    padding: 8px 22px; border-radius: 30px; border: 1.5px solid var(--border);
+    background: var(--surface); color: var(--brown);
+    font-family: inherit; font-size: 0.85rem; font-weight: 700; cursor: pointer;
+    transition: all 0.22s; box-shadow: 0 1px 6px var(--shadow); position: relative; overflow: hidden;
+  }
+  .nav-btn:hover { background: var(--brown); color: var(--bg); border-color: var(--brown); transform: translateY(-2px); box-shadow: 0 6px 18px var(--glow); }
+  .circle-btn { width: 42px; height: 42px; padding: 0; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  /* BROWSER */
+  #browser {
+    position: fixed; inset: 0; z-index: 20;
+    display: flex; flex-direction: column;
+    opacity: 0; pointer-events: none; transform: translateY(30px);
+    transition: opacity 0.4s, transform 0.4s cubic-bezier(.16,1,.3,1);
+  }
+  #browser.show { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .browser-bar {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    background: var(--surface); border-bottom: 1.5px solid var(--border);
+    box-shadow: 0 2px 12px var(--shadow); flex-shrink: 0;
+  }
+  .back-btn {
+    padding: 7px 16px; border-radius: 30px; border: 1.5px solid var(--border);
+    background: var(--bg); color: var(--brown);
+    font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+    transition: all 0.2s; box-shadow: 0 1px 4px var(--shadow);
+  }
+  .back-btn:hover { background: var(--brown); color: var(--bg); border-color: var(--brown); }
+  .url-bar {
+    flex: 1; background: #fff; border: 1.5px solid var(--border); border-radius: 30px;
+    padding: 7px 18px; font-family: inherit; font-size: 0.82rem; color: var(--muted);
+    outline: none; transition: border-color 0.2s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .url-bar:focus { border-color: var(--brown2); color: var(--text); }
+  .go-btn {
+    padding: 7px 18px; border-radius: 30px; border: none;
+    background: var(--brown); color: #fdf6ee;
+    font-family: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer; white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .go-btn:hover { background: var(--dark); }
+  #frame-wrap { flex: 1; position: relative; background: #fff; }
+  #proxy-frame { width: 100%; height: 100%; border: none; opacity: 0; transition: opacity 0.4s; }
+  #proxy-frame.loaded { opacity: 1; }
+  .loading-overlay {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; background: var(--bg); gap: 16px; transition: opacity 0.3s;
+  }
+  .loading-overlay.hide { opacity: 0; pointer-events: none; }
+  .spinner { width: 40px; height: 40px; border: 3px solid var(--border); border-top-color: var(--brown); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-text { color: var(--muted); font-size: 0.85rem; }
+
+  /* MODALS */
+  .overlay {
+    position: fixed; inset: 0; background: rgba(59,37,16,0.35); backdrop-filter: blur(6px);
+    z-index: 200; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: #fdf6ee; border: 1.5px solid var(--border); border-radius: 22px;
+    box-shadow: 0 24px 70px rgba(80,40,10,0.22);
+    transform: scale(0.88) translateY(20px);
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), opacity 0.3s;
+    opacity: 0; position: relative; overflow: hidden;
+  }
+  .overlay.open .modal { transform: scale(1) translateY(0); opacity: 1; }
+  .modal-close {
+    position: absolute; top: 14px; right: 16px;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--muted);
+    width: 30px; height: 30px; border-radius: 50%; cursor: pointer; font-size: 0.9rem;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 2; font-family: inherit;
+  }
+  .modal-close:hover { background: var(--brown); color: #fdf6ee; border-color: var(--brown); }
+  #about-overlay .modal { width: min(400px, 90vw); padding: 36px 30px 30px; }
+  .about-icon { width: 50px; height: 50px; border-radius: 50%; background: var(--brown); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 16px; box-shadow: 0 4px 16px var(--glow); }
+  .modal-title { font-family: 'Playfair Display', Georgia, serif; font-size: 1.35rem; font-weight: 700; color: var(--dark); margin-bottom: 10px; }
+  .modal-body { color: var(--muted); font-size: 0.88rem; line-height: 1.7; }
+  .modal-body strong { color: var(--brown2); }
+  .divider { width: 60px; height: 3px; background: linear-gradient(90deg, var(--brown), var(--brown2)); border-radius: 2px; margin: 10px 0 20px; opacity: 0.5; }
+  .about-steps { margin-top: 18px; display: flex; flex-direction: column; gap: 10px; }
+  .step { display: flex; align-items: flex-start; gap: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; font-size: 0.84rem; color: var(--text); line-height: 1.5; }
+  .step-num { min-width: 22px; height: 22px; border-radius: 50%; background: var(--brown); color: #fdf6ee; display: flex; align-items: center; justify-content: center; font-size: 0.72rem; font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  #files-overlay .modal { width: min(540px, 92vw); padding: 36px 30px 30px; }
+  .files-sub { color: var(--muted); font-size: 0.83rem; margin-bottom: 22px; margin-top: 4px; }
+  .bookmarks-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .bookmark-card { background: var(--surface); border: 1.5px solid var(--border); border-radius: 16px; padding: 20px; cursor: pointer; color: var(--text); transition: all 0.28s cubic-bezier(.16,1,.3,1); display: flex; flex-direction: column; gap: 8px; position: relative; overflow: hidden; }
+  .bookmark-card::before { content: ''; position: absolute; inset: 0; background: var(--brown); opacity: 0; transition: opacity 0.25s; }
+  .bookmark-card:hover { border-color: var(--brown2); transform: translateY(-5px) scale(1.03); box-shadow: 0 14px 40px var(--glow); }
+  .bookmark-card:hover::before { opacity: 0.06; }
+  .bm-icon { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; position: relative; z-index: 1; }
+  .bm-name { font-weight: 700; font-size: 0.93rem; position: relative; z-index: 1; color: var(--dark); }
+  .bm-desc { font-size: 0.77rem; color: var(--muted); line-height: 1.4; position: relative; z-index: 1; }
+  .bm-arrow { margin-top: 4px; font-size: 0.76rem; color: var(--brown2); font-weight: 700; position: relative; z-index: 1; display: flex; align-items: center; gap: 4px; opacity: 0; transform: translateX(-5px); transition: all 0.22s; }
+  .bookmark-card:hover .bm-arrow { opacity: 1; transform: translateX(0); }
+
+  @keyframes ripple { to { transform: scale(4); opacity: 0; } }
+  .ripple-el { position: absolute; border-radius: 50%; background: rgba(123,79,46,0.25); animation: ripple 0.6s linear; pointer-events: none; transform: scale(0); }
+</style>
+</head>
+<body>
+
+<div class="clock-widget">
+  <div class="clock-time" id="clockTime"></div>
+  <div class="clock-day" id="clockDay"></div>
+</div>
+
+<div class="dots" id="dots"></div>
+
+<!-- HOME -->
+<div id="home">
+  <h1 class="hero-title" id="mainTitle" onclick="explodeTitle()">
+    <span class="t-letter">S</span><span class="t-letter">t</span><span class="t-letter">o</span><span class="t-letter">m</span><span class="t-letter">a</span><span class="t-letter">t</span><span class="t-letter">i</span><span class="t-letter">c</span>
+  </h1>
+  <div class="search-wrap">
+    <div class="search-box">
+      <span class="search-icon">☕</span>
+      <input class="search-input" id="searchInput" type="text" placeholder="Search or enter a URL…" autocomplete="off"
+        onkeydown="if(event.key==='Enter') doSearch()">
+      <button class="search-btn" onclick="doSearch()">Search</button>
+    </div>
+    <div class="search-tabs">
+      <button class="nav-btn" onclick="openModal('about-overlay', this)">About</button>
+      <button class="nav-btn circle-btn" onclick="openModal('files-overlay', this)">📁</button>
+    </div>
+  </div>
+</div>
+
+<!-- BROWSER -->
+<div id="browser">
+  <div class="browser-bar">
+    <button class="back-btn" onclick="goHome()">← Home</button>
+    <input class="url-bar" id="urlBar" type="text" placeholder="Enter URL…"
+      onkeydown="if(event.key==='Enter') navigateTo(this.value)">
+    <button class="go-btn" onclick="navigateTo(document.getElementById('urlBar').value)">Go</button>
+  </div>
+  <div id="frame-wrap">
+    <div class="loading-overlay" id="loader">
+      <div class="spinner"></div>
+      <div class="loading-text">Loading through proxy…</div>
+    </div>
+    <iframe id="proxy-frame" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<div class="overlay" id="about-overlay" onclick="closeOnBg(event,'about-overlay')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('about-overlay')">✕</button>
+    <div class="about-icon">☕</div>
+    <div class="modal-title">What is Stomatic?</div>
+    <div class="divider"></div>
+    <div class="modal-body">
+      <strong>Stomatic</strong> is a proxy-powered search tool that routes your browsing privately.
+      <div class="about-steps">
+        <div class="step"><div class="step-num">1</div><div>Type a search term or full URL in the bar.</div></div>
+        <div class="step"><div class="step-num">2</div><div>Hit <strong>Search</strong> or press <strong>Enter</strong>.</div></div>
+        <div class="step"><div class="step-num">3</div><div>The page loads right here, no new tabs.</div></div>
+        <div class="step"><div class="step-num">4</div><div>Use <strong>📁</strong> to access bookmarked sites.</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FILES -->
+<div class="overlay" id="files-overlay" onclick="closeOnBg(event,'files-overlay')">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('files-overlay')">✕</button>
+    <div class="modal-title">📁 Bookmarks</div>
+    <div class="divider"></div>
+    <div class="files-sub">Quick-access sites, all loaded right here.</div>
+    <div class="bookmarks-grid">
+      <div class="bookmark-card" onclick="loadProxy('https://www.crazygames.com/')">
+        <div class="bm-icon" style="background:rgba(160,103,58,0.12)">🎮</div>
+        <div class="bm-name">CrazyGames</div>
+        <div class="bm-desc">Free browser games, no downloads needed.</div>
+        <div class="bm-arrow">Open →</div>
+      </div>
+      <div class="bookmark-card" onclick="loadProxy('https://www.coolmathgames.com/')">
+        <div class="bm-icon" style="background:rgba(160,103,58,0.12)">🧮</div>
+        <div class="bm-name">Cool Math Games</div>
+        <div class="bm-desc">Strategy, logic & math games for all ages.</div>
+        <div class="bm-arrow">Open →</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    const days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    let h = now.getHours(), m = now.getMinutes(), ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    document.getElementById('clockTime').textContent = `${h}:${String(m).padStart(2,'0')} ${ampm}`;
+    document.getElementById('clockDay').textContent = days[now.getDay()];
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Dots
+  const dotsEl = document.getElementById('dots');
+  for (let i = 0; i < 60; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot';
+    const sz = 6 + Math.random() * 14;
+    const x = Math.random() * 100, y = Math.random() * 100;
+    const dist = Math.sqrt(Math.pow((x-50)/50,2) + Math.pow((y-50)/50,2));
+    const op = 0.04 + dist * 0.28;
+    d.style.cssText = `left:${x}%;top:${y}%;width:${sz}px;height:${sz}px;--dur:${3+Math.random()*4}s;--delay:${Math.random()*6}s;--op:${op};`;
+    dotsEl.appendChild(d);
+  }
+
+  // Bubble repulsion
+  const dotEls = Array.from(dotsEl.children);
+  const pos = dotEls.map(d => ({
+    ox: parseFloat(d.style.left), oy: parseFloat(d.style.top),
+    x:  parseFloat(d.style.left), y:  parseFloat(d.style.top),
+    vx: 0, vy: 0
+  }));
+  let mx = -999, my = -999;
+  document.addEventListener('mousemove', e => {
+    mx = (e.clientX / window.innerWidth) * 100;
+    my = (e.clientY / window.innerHeight) * 100;
+  });
+  (function animateBubbles() {
+    pos.forEach((p, i) => {
+      const dx = p.x - mx, dy = p.y - my;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < 14 && dist > 0) {
+        const force = (14 - dist) / 14 * 0.4;
+        p.vx += (dx/dist)*force; p.vy += (dy/dist)*force;
+      }
+      p.vx += (p.ox - p.x) * 0.03; p.vy += (p.oy - p.y) * 0.03;
+      p.vx *= 0.88; p.vy *= 0.88;
+      p.x += p.vx; p.y += p.vy;
+      dotEls[i].style.left = p.x + '%';
+      dotEls[i].style.top  = p.y + '%';
+    });
+    requestAnimationFrame(animateBubbles);
+  })();
+
+  // Explosion
+  let exploding = false;
+  function explodeTitle() {
+    if (exploding) return;
+    exploding = true;
+    const title = document.getElementById('mainTitle');
+    const letters = Array.from(title.querySelectorAll('.t-letter'));
+    const obstacles = Array.from(document.querySelectorAll('.search-box, .nav-btn, .circle-btn'))
+      .map(el => el.getBoundingClientRect());
+
+    const particles = letters.map(span => {
+      const r = span.getBoundingClientRect();
+      return { el: span, ox: r.left, oy: r.top, x: r.left, y: r.top, w: r.width, h: r.height,
+        vx: (Math.random()-0.5)*18, vy: -8 - Math.random()*12,
+        rot: 0, vrot: (Math.random()-0.5)*22, opacity: 1 };
+    });
+
+    const tr = title.getBoundingClientRect();
+    title.style.width  = tr.width  + 'px';
+    title.style.height = tr.height + 'px';
+    title.style.visibility = 'hidden';
+
+    particles.forEach(p => {
+      document.body.appendChild(p.el);
+      p.el.style.cssText = `position:fixed;left:${p.x}px;top:${p.y}px;width:${p.w}px;height:${p.h}px;
+        font-family:'Playfair Display',Georgia,serif;font-size:${p.h*0.85}px;font-weight:900;
+        color:var(--dark);margin:0;padding:0;pointer-events:none;z-index:999;
+        display:flex;align-items:center;justify-content:center;`;
+    });
+
+    const gravity = 0.55, friction = 0.984;
+    let frame = 0;
+
+    function physics() {
+      frame++;
+      let allFaded = true;
+      particles.forEach(p => {
+        if (p.opacity <= 0) return;
+        allFaded = false;
+        p.vy += gravity; p.vx *= friction; p.vy *= friction;
+        p.x += p.vx; p.y += p.vy;
+        p.rot += p.vrot; p.vrot *= 0.97;
+
+        if (p.x < 0)                      { p.x = 0;                       p.vx *= -0.6; }
+        if (p.x+p.w > window.innerWidth)  { p.x = window.innerWidth-p.w;   p.vx *= -0.6; }
+        if (p.y+p.h > window.innerHeight) { p.y = window.innerHeight-p.h;  p.vy *= -0.5; p.vx *= 0.85; }
+
+        obstacles.forEach(o => {
+          if (p.x < o.right && p.x+p.w > o.left && p.y < o.bottom && p.y+p.h > o.top) {
+            const oL=(p.x+p.w)-o.left, oR=o.right-p.x, oT=(p.y+p.h)-o.top, oB=o.bottom-p.y;
+            if (Math.min(oL,oR) < Math.min(oT,oB)) { p.vx*=-0.6; p.x+=oL<oR?-oL-1:oR+1; }
+            else { p.vy*=-0.6; p.y+=oT<oB?-oT-1:oB+1; }
+          }
+        });
+
+        particles.forEach(q => {
+          if (q===p || q.opacity<=0) return;
+          const dx=(p.x+p.w/2)-(q.x+q.w/2), dy=(p.y+p.h/2)-(q.y+q.h/2);
+          const d=Math.sqrt(dx*dx+dy*dy), minD=(p.w+q.w)*0.45;
+          if (d<minD && d>0) {
+            const nx=dx/d, ny=dy/d, rv=(p.vx-q.vx)*nx+(p.vy-q.vy)*ny;
+            if (rv<0) { p.vx-=rv*nx*0.5; p.vy-=rv*ny*0.5; q.vx+=rv*nx*0.5; q.vy+=rv*ny*0.5; }
+          }
+        });
+
+        if (frame > 80) p.opacity = Math.max(0, p.opacity - 0.03);
+        p.el.style.left = p.x+'px'; p.el.style.top = p.y+'px';
+        p.el.style.opacity = p.opacity;
+        p.el.style.transform = `rotate(${p.rot}deg)`;
+      });
+
+      if (!allFaded) { requestAnimationFrame(physics); return; }
+
+      particles.forEach(p => {
+        title.appendChild(p.el);
+        p.el.style.cssText = 'display:inline-block;opacity:0;transition:opacity 0.7s ease;';
+      });
+      title.style.width = title.style.height = '';
+      title.style.visibility = 'visible';
+      requestAnimationFrame(() => {
+        particles.forEach(p => p.el.style.opacity = '1');
+        setTimeout(() => { particles.forEach(p => p.el.style.cssText = 'display:inline-block;'); exploding = false; }, 750);
+      });
+    }
+    requestAnimationFrame(physics);
+  }
+
+  // Proxy
+  const engines = {
+    google:  q => `https://www.google.com/search?q=${encodeURIComponent(q)}`,
+    bing:    q => `https://www.bing.com/search?q=${encodeURIComponent(q)}`,
+    ddg:     q => `https://duckduckgo.com/?q=${encodeURIComponent(q)}`,
+    youtube: q => `https://www.youtube.com/results?search_query=${encodeURIComponent(q)}`
+  };
+  function xorEncode(str) {
+    return encodeURIComponent([...str].map(c => String.fromCharCode(c.charCodeAt(0) ^ 2)).join(''));
+  }
+  const PROXY = url => `https://governing-helaine-larkywarky-8eb6b21c.koyeb.app/uv/service/${xorEncode(url)}`;
+
+  function doSearch() {
+    const q = document.getElementById('searchInput').value.trim();
+    if (!q) return;
+    let url;
+    if (/^https?:\/\//i.test(q)) url = q;
+    else if (/^[\w-]+\.[a-z]{2,}/i.test(q)) url = 'https://' + q;
+    else url = engines['google'](q);
+    loadProxy(url);
+  }
+
+  function loadProxy(url) {
+    closeModal('files-overlay'); closeModal('about-overlay');
+    document.getElementById('urlBar').value = url;
+    const frame = document.getElementById('proxy-frame');
+    const loader = document.getElementById('loader');
+    frame.classList.remove('loaded'); loader.classList.remove('hide');
+    frame.src = PROXY(url);
+    frame.onload = () => { frame.classList.add('loaded'); loader.classList.add('hide'); };
+    document.getElementById('home').classList.add('hide');
+    document.getElementById('browser').classList.add('show');
+  }
+
+  function navigateTo(val) {
+    if (!val.trim()) return;
+    let url;
+    if (/^https?:\/\//i.test(val)) url = val;
+    else if (/^[\w-]+\.[a-z]{2,}/i.test(val)) url = 'https://' + val;
+    else url = engines['google'](val);
+    loadProxy(url);
+  }
+
+  function goHome() {
+    document.getElementById('browser').classList.remove('show');
+    document.getElementById('home').classList.remove('hide');
+    document.getElementById('proxy-frame').src = '';
+  }
+
+  function openModal(id, btn) { if(btn) addRipple(btn); document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function closeOnBg(e, id) { if (e.target.id === id) closeModal(id); }
+  function addRipple(el) {
+    const r = document.createElement('span'); r.className = 'ripple-el';
+    const rect = el.getBoundingClientRect(), size = Math.max(rect.width, rect.height);
+    r.style.cssText = `width:${size}px;height:${size}px;left:${rect.width/2-size/2}px;top:${rect.height/2-size/2}px;`;
+    el.appendChild(r); setTimeout(() => r.remove(), 600);
+  }
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') { closeModal('about-overlay'); closeModal('files-overlay'); }
+  });
+</script>
+</body>
 </html>
