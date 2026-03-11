@@ -303,7 +303,7 @@
     const uvConfig = document.createElement('script');
     uvConfig.src = '/uv/uv.config.js';
     uvConfig.onload = () => {
-      navigator.serviceWorker.register('/uv/uv.sw.js', { scope: '/uv/service/' })
+      navigator.serviceWorker.register('/sw.js', { scope: '/uv/service/' })
         .then(reg => {
           const sw = reg.installing || reg.waiting || reg.active;
           if (reg.active) { swReady = true; return; }
