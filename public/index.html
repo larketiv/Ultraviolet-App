@@ -476,21 +476,12 @@
     document.getElementById('urlBar').value = url;
     const frame = document.getElementById('proxy-frame');
     const loader = document.getElementById('loader');
-    frame.classList.remove('loaded'); loader.classList.remove('hide');
+    frame.classList.remove('loaded');
+    loader.classList.remove('hide');
     document.getElementById('home').classList.add('hide');
     document.getElementById('browser').classList.add('show');
-
-    const go = () => {
-      frame.src = PROXY(url);
-      setTimeout(() => { frame.classList.add('loaded'); loader.classList.add('hide'); }, 2000);
-    };
-
-    if (swReady) {
-      go();
-    } else {
-      // Wait for SW to activate then navigate
-      navigator.serviceWorker.ready.then(() => { swReady = true; go(); });
-    }
+    frame.src = PROXY(url);
+    setTimeout(() => { frame.classList.add('loaded'); loader.classList.add('hide'); }, 3000);
   }
 
   function navigateTo(val) {
