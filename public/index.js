@@ -1,50 +1,52 @@
-"use strict";
-/**
- * @type {HTMLFormElement}
- */
-const form = document.getElementById("uv-form");
-/**
- * @type {HTMLInputElement}
- */
-const address = document.getElementById("uv-address");
-/**
- * @type {HTMLInputElement}
- */
-const searchEngine = document.getElementById("uv-search-engine");
-/**
- * @type {HTMLParagraphElement}
- */
-const error = document.getElementById("uv-error");
-/**
- * @type {HTMLPreElement}
- */
-const errorCode = document.getElementById("uv-error-code");
-const connection = new BareMux.BareMuxConnection("/baremux/worker.js");
+import { join } from 'path';
+import { hostname } from "node:os";
+import { createServer } from "node:http";
+import express from "express";
+import wisp from "wisp-server-node";
+import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
+import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
+import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
+import { createBareServer } from "@tomphttp/bare-server-node";
 
-form.addEventListener("submit", async (event) => {
-	event.preventDefault();
+const bare = createBareServer('/bare/');
+const app = express();
 
-	try {
-		await registerSW();
-	} catch (err) {
-		error.textContent = "Failed to register service worker.";
-		errorCode.textContent = err.toString();
-		throw err;
-	}
+app.use(express.static("./public"));
+app.use("/uv/", express.static(uvPath));
+app.use("/epoxy/", express.static(epoxyPath));
+app.use("/baremux/", express.static(baremuxPath));
 
-	const url = search(address.value, searchEngine.value);
-
-	let frame = document.getElementById("uv-frame");
-	frame.style.display = "block";
-	let wispUrl =
-		(location.protocol === "https:" ? "wss" : "ws") +
-		"://" +
-		location.host +
-		"/wisp/";
-	if ((await connection.getTransport()) !== "/epoxy/index.mjs") {
-		await connection.setTransport("/epoxy/index.mjs", [
-			{ wisp: wispUrl },
-		]);
-	}
-	frame.src = __uv$config.prefix + __uv$config.encodeUrl(url);
+app.use((req, res) => {
+  res.status(404);
+  res.sendFile('index.html', { root: join(new URL('.', import.meta.url).pathname, '../public') });
 });
+
+const server = createServer();
+server.on("request", (req, res) => {
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  if (bare.shouldRoute(req)) bare.routeRequest(req, res);
+  else app(req, res);
+});
+server.on("upgrade", (req, socket, head) => {
+  if (bare.shouldRoute(req)) bare.routeUpgrade(req, socket, head);
+  else if (req.url.endsWith("/wisp/")) wisp.routeRequest(req, socket, head);
+  else socket.end();
+});
+
+let port = parseInt(process.env.PORT || "");
+if (isNaN(port)) port = 8080;
+server.on("listening", () => {
+  const address = server.address();
+  console.log("Listening on:");
+  console.log(`\thttp://localhost:${address.port}`);
+  console.log(`\thttp://${hostname()}:${address.port}`);
+});
+process.on("SIGINT", shutdown);
+process.on("SIGTERM", shutdown);
+function shutdown() {
+  console.log("SIGTERM signal received: closing HTTP server");
+  server.close();
+  process.exit(0);
+}
+server.listen({ port });
