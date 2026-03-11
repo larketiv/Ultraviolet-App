@@ -512,6 +512,14 @@
   document.addEventListener('keydown', e => {
     if (e.key === 'Escape') { closeModal('about-overlay'); closeModal('files-overlay'); }
   });
+
+<script src="/baremux/index.js"></script>
+<script>
+  const { BareMux } = window;
+  const conn = new BareMux.BareMuxConnection("/baremux/worker.js");
+  conn.setTransport("/epoxy/index.mjs", ["https://proxy.zenith.boo/bare/"]);
+</script>
+ 
 </script>
 </body>
 </html>
